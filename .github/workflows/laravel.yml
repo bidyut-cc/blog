@@ -32,11 +32,12 @@ jobs:
     - name: Set up SSH for deployment
       uses: appleboy/ssh-action@v0.1.6
       with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ec2-user
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        host: ${{ secrets.EC2_HOST }}  # Your EC2 IP address as a secret
+        username: ubuntu  # or ec2-user, depending on your EC2 AMI
+        key: ${{ secrets.SSH_PRIVATE_KEY }}  # Your private key
+        port: 22
         script: |
-          cd /var/www/html/your-laravel-project &&
+          cd /var/www/html/blog &&
           git pull origin main &&
           composer install --no-dev &&
           php artisan migrate --force &&
@@ -44,3 +45,4 @@ jobs:
           php artisan config:cache &&
           php artisan route:cache &&
           sudo service apache2 restart
+    
