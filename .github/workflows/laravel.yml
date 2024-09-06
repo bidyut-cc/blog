@@ -9,7 +9,7 @@ on:
 jobs:
   laravel-deploy:
 
-    runs-on: ubuntu-24.04  # You can use ubuntu-latest or ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: shivammathur/setup-php@v2
@@ -32,13 +32,12 @@ jobs:
       run: chmod -R 777 storage bootstrap/cache
 
     - name: Set up SSH for deployment
-      uses: webfactory/ssh-agent@v0.7.0  # Updated version to support Node 16
+      uses: appleboy/ssh-action@v0.1.6
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: Deploy to EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no ec2-user@<your-ec2-ip> "
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
           cd /var/www/html/your-laravel-project &&
           git pull origin main &&
           composer install --no-dev &&
@@ -47,4 +46,3 @@ jobs:
           php artisan config:cache &&
           php artisan route:cache &&
           sudo service apache2 restart
-        "
