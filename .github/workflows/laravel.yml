@@ -7,7 +7,7 @@ on:
 jobs:
   laravel-deploy:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: shivammathur/setup-php@v2
@@ -36,11 +36,10 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ec2-user@<your-ec2-ip> "
+        ssh -o StrictHostKeyChecking=no ec2-user@65.0.177.219 "
           cd /var/www/html/your-laravel-project &&
           git pull origin main &&
           composer install --no-dev &&
-          php artisan migrate --force &&
           php artisan cache:clear &&
           php artisan config:cache &&
           php artisan route:cache &&
